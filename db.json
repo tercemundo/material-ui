@@ -21,7 +21,7 @@
     {
       "id": "dbf2",
       "ip": "192.168.0.44",
-      "paquete": "Apache",
+      "paquete": "apache2",
       "so": "Linux Debian"
     }
   ],
