@@ -1,0 +1,29 @@
+{
+  "hosts": [
+    {
+      "ip": "192.168.0.10",
+      "paquete": "nginx",
+      "so": "Ubuntu 22.04",
+      "id": "1"
+    },
+    {
+      "ip": "192.168.0.20",
+      "paquete": "mysql",
+      "so": "Debian 12",
+      "id": "2"
+    },
+    {
+      "ip": "10.0.0.5",
+      "paquete": "iptables",
+      "so": "OPNsense",
+      "id": "3"
+    },
+    {
+      "id": "dbf2",
+      "ip": "192.168.0.44",
+      "paquete": "Apache",
+      "so": "Linux Debian"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
