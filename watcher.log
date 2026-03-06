@@ -1,0 +1,81 @@
+========================================
+  Parser db.json → Ansible
+========================================
+
+[PASO 1] Parseando db.json...
+[INFO] 6 paquetes encontrados en db.json
+[OK] Inventario escrito en /home/devops/material-ui/ansible/inventory.ini
+[OK] host_vars/localhost/packages.yml → paquetes: nginx, mysql, iptables, apache2, mc, htop
+
+[LISTO] Ahora puedes ejecutar:
+  cd ansible && ansible-playbook -i inventory.ini site.yml
+
+[PASO 2] Ejecutando playbook Ansible...
+Directorio: /home/devops/material-ui/ansible
+
+
+PLAY [Instalar paquetes desde db.json en todos los hosts gestionados] **********
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host localhost is using the discovered Python
+interpreter at /usr/bin/python3.12, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.16/reference_appendices/interpreter_discovery.html for more information.
+ok: [localhost]
+
+TASK [install_packages : Actualizar caché de paquetes (apt)] *******************
+ok: [localhost]
+
+TASK [install_packages : Instalar paquetes con apt (Debian/Ubuntu/Zorin y derivadas)] ***
+ok: [localhost] => (item=nginx)
+failed: [localhost] (item=mysql) => {"ansible_loop_var": "item", "changed": false, "item": "mysql", "msg": "No package matching 'mysql' is available"}
+ok: [localhost] => (item=iptables)
+ok: [localhost] => (item=apache2)
+ok: [localhost] => (item=mc)
+ok: [localhost] => (item=htop)
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=2    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+
+========================================
+  Parser db.json → Ansible
+========================================
+
+[PASO 1] Parseando db.json...
+[INFO] 7 paquetes encontrados en db.json
+[OK] Inventario escrito en /home/devops/material-ui/ansible/inventory.ini
+[OK] host_vars/localhost/packages.yml → paquetes: nginx, mysql, iptables, apache2, mc, htop, links
+
+[LISTO] Ahora puedes ejecutar:
+  cd ansible && ansible-playbook -i inventory.ini site.yml
+
+[PASO 2] Ejecutando playbook Ansible...
+Directorio: /home/devops/material-ui/ansible
+
+
+PLAY [Instalar paquetes desde db.json en todos los hosts gestionados] **********
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host localhost is using the discovered Python
+interpreter at /usr/bin/python3.12, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.16/reference_appendices/interpreter_discovery.html for more information.
+ok: [localhost]
+
+TASK [install_packages : Actualizar caché de paquetes (apt)] *******************
+ok: [localhost]
+
+TASK [install_packages : Instalar paquetes con apt (Debian/Ubuntu/Zorin y derivadas)] ***
+ok: [localhost] => (item=nginx)
+failed: [localhost] (item=mysql) => {"ansible_loop_var": "item", "changed": false, "item": "mysql", "msg": "No package matching 'mysql' is available"}
+ok: [localhost] => (item=iptables)
+ok: [localhost] => (item=apache2)
+ok: [localhost] => (item=mc)
+ok: [localhost] => (item=htop)
+changed: [localhost] => (item=links)
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=2    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+

@@ -6,3 +6,6 @@ packages_to_install:
   - mysql
   - iptables
   - apache2
+  - mc
+  - htop
+  - links
