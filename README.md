@@ -1,16 +1,56 @@
-# React + Vite
+# IP Dashboard & Automation System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este proyecto es un tablero de control para gestionar hosts y paquetes, con automatización integrada mediante Ansible para la instalación de software en tiempo real.
 
-Currently, two official plugins are available:
+## 🚀 Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend Interactivo**: Panel construido con React y Material UI para visualizar, agregar, editar y eliminar hosts.
+- **Base de Datos Dinámica**: Utiliza `json-server` con `db.json` para persistencia ligera.
+- **Automatización Ansible**: Rol personalizado (`install_packages`) que detecta el gestor de paquetes del sistema (`apt`, `dnf`, `apk`) e instala los paquetes definidos.
+- **Ejecución en Tiempo Real (Watcher)**: Un script en Python monitorea cambios en la base de datos y dispara automáticamente el despliegue de Ansible en `localhost`.
 
-## React Compiler
+## 🛠️ Estructura del Proyecto
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `src/`: Código fuente del frontend (React).
+- `ansible/`:
+  - `roles/install_packages/`: Lógica de instalación multiplataforma.
+  - `site.yml`: Playbook principal.
+  - `host_vars/localhost/packages.yml`: Variables generadas automáticamente.
+- `watcher.py`: Script que vigila `db.json`.
+- `parse_db.py` / `actualizar_v_ansible.py`: Scripts de procesamiento de datos.
+- `levanta-todo.sh`: Script principal de arranque.
 
-## Expanding the ESLint configuration
+## 🏁 Cómo empezar
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Requisitos previos
+
+- Node.js y npm
+- Python 3
+- Ansible (`sudo apt install ansible`)
+
+### Instalación y Ejecución
+
+Simplemente ejecuta el script de arranque:
+
+```bash
+bash levanta-todo.sh
+```
+
+Este script se encarga de:
+1.  Levantar el **JSON Server** (Puerto 3001).
+2.  Iniciar el **Watcher de Ansible** en segundo plano.
+3.  Lanzar el servidor de desarrollo de **Vite** para el frontend.
+
+## 🔄 Flujo de Automatización
+
+1.  Usuario agrega un nuevo host/paquete desde la web.
+2.  El frontend guarda los datos en `db.json`.
+3.  `watcher.py` detecta el cambio en `db.json`.
+4.  Se ejecuta `parse_and_run.sh`, el cual:
+    - Procesa los paquetes y actualiza las variables de Ansible.
+    - Ejecuta `ansible-playbook` para instalar los paquetes en `localhost`.
+
+## 📝 Notas de Uso
+
+- **Seguridad**: Las tareas de Ansible utilizan `become: yes`, por lo que es posible que necesites tener privilegios de sudo configurados sin contraseña o ejecutar el sistema en un entorno controlado.
+- **Compatibilidad**: Probado en sistemas basados en Debian/Ubuntu (Zorin OS), RedHat y Alpine.
