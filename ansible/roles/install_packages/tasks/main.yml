@@ -1,0 +1,40 @@
+---
+# Rol: install_packages
+# Instala los paquetes definidos en la variable `packages_to_install`
+
+- name: Actualizar caché de paquetes (apt)
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  when: ansible_pkg_mgr == "apt"
+  become: yes
+
+- name: Instalar paquetes con apt (Debian/Ubuntu/Zorin y derivadas)
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages_to_install }}"
+  when: ansible_pkg_mgr == "apt"
+  become: yes
+
+- name: Instalar paquetes con yum/dnf (RedHat/CentOS/Fedora)
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages_to_install }}"
+  when: ansible_pkg_mgr in ["yum", "dnf"]
+  become: yes
+
+- name: Instalar paquetes con apk (Alpine)
+  ansible.builtin.apk:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages_to_install }}"
+  when: ansible_pkg_mgr == "apk"
+  become: yes
+
+- name: Mostrar paquetes instalados
+  ansible.builtin.debug:
+    msg: "Paquete '{{ item }}' instalado correctamente en {{ inventory_hostname }}"
+  loop: "{{ packages_to_install }}"
+

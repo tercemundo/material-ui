@@ -1,0 +1,5 @@
+---
+# Generado automáticamente desde db.json
+# Host: 192.168.0.44  |  SO: Linux Debian
+packages_to_install:
+  - apache2

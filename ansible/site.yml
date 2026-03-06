@@ -1,0 +1,11 @@
+---
+# Playbook principal: site.yml
+# Usa el rol install_packages con los paquetes definidos en host_vars/<ip>/packages.yml
+
+- name: Instalar paquetes desde db.json en todos los hosts gestionados
+  hosts: managed_hosts
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - role: install_packages

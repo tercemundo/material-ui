@@ -1,0 +1,4 @@
+---
+# Valores por defecto del rol install_packages
+# Esta lista se sobreescribe desde el playbook con los datos de db.json
+packages_to_install: []

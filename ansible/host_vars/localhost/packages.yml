@@ -1,0 +1,8 @@
+---
+# Generado automáticamente desde db.json
+# Todos los paquetes de los hosts se instalan en localhost
+packages_to_install:
+  - nginx
+  - mysql
+  - iptables
+  - apache2

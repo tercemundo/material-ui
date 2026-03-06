@@ -1,0 +1,5 @@
+---
+# Generado automáticamente desde db.json
+# Host: 192.168.0.20  |  SO: Debian 12
+packages_to_install:
+  - mysql

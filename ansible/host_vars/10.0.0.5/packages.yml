@@ -1,0 +1,5 @@
+---
+# Generado automáticamente desde db.json
+# Host: 10.0.0.5  |  SO: OPNsense
+packages_to_install:
+  - iptables
