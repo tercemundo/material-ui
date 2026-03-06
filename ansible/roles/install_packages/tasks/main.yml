@@ -1,6 +1,8 @@
 ---
 # Rol: install_packages
-# Instala los paquetes definidos en la variable `packages_to_install`
+# Instala los paquetes en packages_to_install y desinstala los de packages_to_remove
+
+# ── INSTALAR ──────────────────────────────────────────────────────────────────
 
 - name: Actualizar caché de paquetes (apt)
   ansible.builtin.apt:
@@ -14,27 +16,79 @@
     name: "{{ item }}"
     state: present
   loop: "{{ packages_to_install }}"
-  when: ansible_pkg_mgr == "apt"
+  when:
+    - ansible_pkg_mgr == "apt"
+    - packages_to_install | length > 0
   become: yes
+  ignore_errors: yes
 
 - name: Instalar paquetes con yum/dnf (RedHat/CentOS/Fedora)
   ansible.builtin.package:
     name: "{{ item }}"
     state: present
   loop: "{{ packages_to_install }}"
-  when: ansible_pkg_mgr in ["yum", "dnf"]
+  when:
+    - ansible_pkg_mgr in ["yum", "dnf"]
+    - packages_to_install | length > 0
   become: yes
+  ignore_errors: yes
 
 - name: Instalar paquetes con apk (Alpine)
   ansible.builtin.apk:
     name: "{{ item }}"
     state: present
   loop: "{{ packages_to_install }}"
-  when: ansible_pkg_mgr == "apk"
+  when:
+    - ansible_pkg_mgr == "apk"
+    - packages_to_install | length > 0
   become: yes
+  ignore_errors: yes
 
 - name: Mostrar paquetes instalados
   ansible.builtin.debug:
-    msg: "Paquete '{{ item }}' instalado correctamente en {{ inventory_hostname }}"
+    msg: "Paquete '{{ item }}' instalado en {{ inventory_hostname }}"
   loop: "{{ packages_to_install }}"
+  when: packages_to_install | length > 0
 
+# ── DESINSTALAR ───────────────────────────────────────────────────────────────
+
+- name: Desinstalar paquetes eliminados con apt
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: absent
+    purge: yes
+    autoremove: yes
+  loop: "{{ packages_to_remove }}"
+  when:
+    - ansible_pkg_mgr == "apt"
+    - packages_to_remove | length > 0
+  become: yes
+  ignore_errors: yes
+
+- name: Desinstalar paquetes eliminados con yum/dnf
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ packages_to_remove }}"
+  when:
+    - ansible_pkg_mgr in ["yum", "dnf"]
+    - packages_to_remove | length > 0
+  become: yes
+  ignore_errors: yes
+
+- name: Desinstalar paquetes eliminados con apk
+  ansible.builtin.apk:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ packages_to_remove }}"
+  when:
+    - ansible_pkg_mgr == "apk"
+    - packages_to_remove | length > 0
+  become: yes
+  ignore_errors: yes
+
+- name: Mostrar paquetes desinstalados
+  ansible.builtin.debug:
+    msg: "Paquete '{{ item }}' DESINSTALADO de {{ inventory_hostname }}"
+  loop: "{{ packages_to_remove }}"
+  when: packages_to_remove | length > 0

@@ -1,5 +1,3 @@
 # Generado automáticamente desde db.json / os.db
-packages_to_install:
-- apache2
-- iptables
-- nginx
+packages_to_remove:
+- mc

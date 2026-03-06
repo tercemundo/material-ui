@@ -13,8 +13,8 @@ echo "========================================"
 
 # 1. Parsear db.json
 echo ""
-echo "[PASO 1] Parseando db.json..."
-python3 "$SCRIPT_DIR/parse_db.py"
+echo "[PASO 1] Parseando base de datos..."
+python3 "$SCRIPT_DIR/actualizar_v_ansible.py"
 
 # 2. Verificar que ansible está instalado
 if ! command -v ansible-playbook &>/dev/null; then

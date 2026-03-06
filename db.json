@@ -7,12 +7,6 @@
       "id": "1"
     },
     {
-      "ip": "192.168.0.20",
-      "paquete": "mysql",
-      "so": "Debian 12",
-      "id": "2"
-    },
-    {
       "ip": "10.0.0.5",
       "paquete": "iptables",
       "so": "OPNsense",
@@ -23,24 +17,6 @@
       "ip": "192.168.0.44",
       "paquete": "apache2",
       "so": "Linux Debian"
-    },
-    {
-      "id": "c5bb",
-      "ip": "localhost",
-      "paquete": "mc",
-      "so": "Zorin"
-    },
-    {
-      "ip": "127.0.0.1",
-      "paquete": "htop",
-      "so": "Linux",
-      "id": "manual"
-    },
-    {
-      "id": "0a81",
-      "ip": "127.0.0.1",
-      "paquete": "links",
-      "so": "Zorin"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

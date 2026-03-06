@@ -1,4 +1,5 @@
 ---
 # Valores por defecto del rol install_packages
-# Esta lista se sobreescribe desde el playbook con los datos de db.json
+# Estas listas se sobreescriben desde host_vars con los datos de db.json
 packages_to_install: []
+packages_to_remove: []

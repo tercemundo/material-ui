@@ -1,0 +1,10 @@
+# Historial acumulativo — no editar manualmente
+known_packages:
+- apache2
+- htop
+- iptables
+- links
+- lynx
+- mc
+- mysql
+- nginx
