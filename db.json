@@ -29,6 +29,12 @@
       "paquete": "htop",
       "so": "Zorin",
       "id": "0GlC5Cl"
+    },
+    {
+      "ip": "127.0.0.1",
+      "paquete": "lynx",
+      "so": "Zorin",
+      "id": "E7i1sYK"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

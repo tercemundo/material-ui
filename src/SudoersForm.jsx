@@ -8,11 +8,17 @@ import {
   Box,
   CircularProgress,
   Alert,
-  Collapse,
+  Stepper,
+  Step,
+  StepLabel,
+  InputAdornment,
+  IconButton
 } from "@mui/material";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 // Regex: minúsculas, comienza con letra, solo letras/números/guión/guión_bajo, max 32 chars
 const USERNAME_REGEX = /^[a-z][a-z0-9_-]{0,31}$/;
@@ -43,29 +49,58 @@ function validateUsername(username) {
   return null; // Sin error
 }
 
+const steps = ["Usuario", "Contraseña", "Creación"];
+
 function SudoersForm() {
+  const [activeStep, setActiveStep] = useState(0);
+
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isRoot, setIsRoot] = useState(false);
+  
   const [validationError, setValidationError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null); // { ok, message }
+  const [result, setResult] = useState(null); // { ok, message, uid }
 
   const handleUsernameChange = (e) => {
     const val = e.target.value;
-    // Sanitización inmediata: solo permitir caracteres válidos en el input
     const sanitized = val.toLowerCase().replace(/[^a-z0-9_-]/g, "");
     setUsername(sanitized);
     setValidationError(validateUsername(sanitized) || "");
+  };
+
+  const handleNext = () => {
+    if (activeStep === 0) {
+      const error = validateUsername(username);
+      if (error) {
+        setValidationError(error);
+        return;
+      }
+      setActiveStep(1);
+    } else if (activeStep === 1) {
+      if (!password || password.trim() === "") {
+        return; // Password can't be empty
+      }
+      setActiveStep(2);
+      handleSubmit();
+    }
+  };
+
+  const handleBack = () => {
+    setActiveStep((prev) => prev - 1);
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+    setUsername("");
+    setPassword("");
+    setIsRoot(false);
     setResult(null);
+    setValidationError("");
   };
 
   const handleSubmit = async () => {
-    const error = validateUsername(username);
-    if (error) {
-      setValidationError(error);
-      return;
-    }
-
     setLoading(true);
     setResult(null);
 
@@ -73,7 +108,7 @@ function SudoersForm() {
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username.trim(), isRoot }),
+        body: JSON.stringify({ username: username.trim(), password: password.trim(), isRoot }),
       });
 
       const data = await res.json();
@@ -84,9 +119,8 @@ function SudoersForm() {
         setResult({
           ok: true,
           message: `Usuario "${username}" creado${isRoot ? " con privilegios root" : ""} y agregado a /etc/sudoers.d/${username}`,
+          uid: data.uid
         });
-        setUsername("");
-        setIsRoot(false);
       }
     } catch (err) {
       setResult({ ok: false, message: `Error de conexión: ${err.message}` });
@@ -95,7 +129,8 @@ function SudoersForm() {
     }
   };
 
-  const isFormValid = username.length > 0 && !validationError;
+  const isUsernameValid = username.length > 0 && !validationError;
+  const isPasswordValid = password.length > 0;
 
   return (
     <Box>
@@ -106,143 +141,180 @@ function SudoersForm() {
         </Typography>
       </Box>
 
-      {/* Campo Usuario */}
-      <TextField
-        id="sudoers-username"
-        fullWidth
-        label="Nombre de usuario"
-        placeholder="ej: pepe"
-        value={username}
-        onChange={handleUsernameChange}
-        error={!!validationError && username.length > 0}
-        helperText={
-          validationError && username.length > 0
-            ? validationError
-            : "Solo letras minúsculas, números, guiones y guiones bajos. Comienza con letra."
-        }
-        disabled={loading}
-        inputProps={{
-          maxLength: 32,
-          autoComplete: "off",
-          spellCheck: false,
-        }}
-        sx={{
-          mb: 3,
-          "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#7c3aed",
-          },
-          "& .MuiInputLabel-root.Mui-focused": {
-            color: "#7c3aed",
-          },
-        }}
-      />
-
-      {/* Switch root */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 2,
-          mb: 3,
-          p: 2,
-          borderRadius: 2,
-          background: isRoot ? "#7c3aed12" : "transparent",
-          border: `1px solid ${isRoot ? "#7c3aed40" : "#e0e0e0"}`,
-          transition: "all 0.2s ease",
-        }}
-      >
-        <FormControlLabel
-          control={
-            <Switch
-              id="sudoers-root-switch"
-              checked={isRoot}
-              onChange={(e) => setIsRoot(e.target.checked)}
-              disabled={loading}
+      <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel
               sx={{
-                "& .MuiSwitch-switchBase.Mui-checked": { color: "#7c3aed" },
-                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-                  backgroundColor: "#7c3aed",
-                },
+                "& .MuiStepLabel-label.Mui-active": { color: "#7c3aed", fontWeight: "bold" },
+                "& .MuiStepIcon-root.Mui-active": { color: "#7c3aed" },
+                "& .MuiStepIcon-root.Mui-completed": { color: "#7c3aed" }
               }}
-            />
-          }
-          label={
-            <Box>
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                ¿Es root?
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {isRoot
-                  ? "Tendrá ALL=(ALL:ALL) NOPASSWD: ALL"
-                  : "Tendrá permisos básicos de sudo"}
-              </Typography>
-            </Box>
-          }
-        />
-      </Box>
+            >
+              {label}
+            </StepLabel>
+          </Step>
+        ))}
+      </Stepper>
 
-      {/* Resumen de lo que se va a hacer */}
-      {isFormValid && (
-        <Box
-          sx={{
-            mb: 3,
-            p: 2,
-            borderRadius: 2,
-            background: "#f3f0ff",
-            border: "1px solid #7c3aed30",
-          }}
-        >
-          <Typography variant="body2" color="text.secondary">
-            Se creará el usuario <strong>{username}</strong> con password{" "}
-            <strong>{username}</strong> y se escribirá{" "}
-            <code>/etc/sudoers.d/{username}</code>{" "}
-            {isRoot ? "con privilegios root totales." : "con permisos de sudo básicos."}
-          </Typography>
+      {/* STEP 1: USUARIO */}
+      {activeStep === 0 && (
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            id="sudoers-username"
+            fullWidth
+            label="Nombre de usuario"
+            placeholder="ej: pepe"
+            value={username}
+            onChange={handleUsernameChange}
+            error={!!validationError && username.length > 0}
+            helperText={
+              validationError && username.length > 0
+                ? validationError
+                : "Solo letras minúsculas, números, guiones y guiones bajos. Comienza con letra."
+            }
+            inputProps={{ maxLength: 32, autoComplete: "off", spellCheck: false }}
+            sx={{
+              "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#7c3aed",
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#7c3aed",
+              },
+            }}
+          />
         </Box>
       )}
 
-      {/* Feedback */}
-      <Collapse in={!!result}>
-        <Alert
-          severity={result?.ok ? "success" : "error"}
-          icon={
-            result?.ok ? (
-              <CheckCircleOutlineIcon />
-            ) : (
-              <ErrorOutlineIcon />
-            )
-          }
-          sx={{ mb: 2, borderRadius: 2 }}
-        >
-          {result?.message}
-        </Alert>
-      </Collapse>
+      {/* STEP 2: CONTRASEÑA */}
+      {activeStep === 1 && (
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            id="sudoers-password"
+            fullWidth
+            label="Contraseña"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            sx={{
+              mb: 3,
+              "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#7c3aed",
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#7c3aed",
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              p: 2,
+              borderRadius: 2,
+              background: isRoot ? "#7c3aed12" : "transparent",
+              border: `1px solid ${isRoot ? "#7c3aed40" : "#e0e0e0"}`,
+              transition: "all 0.2s ease",
+            }}
+          >
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isRoot}
+                  onChange={(e) => setIsRoot(e.target.checked)}
+                  sx={{
+                    "& .MuiSwitch-switchBase.Mui-checked": { color: "#7c3aed" },
+                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": { backgroundColor: "#7c3aed" }
+                  }}
+                />
+              }
+              label={
+                <Box>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>¿Es root?</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {isRoot ? "Tendrá ALL=(ALL:ALL) NOPASSWD: ALL" : "Tendrá permisos básicos de sudo"}
+                  </Typography>
+                </Box>
+              }
+            />
+          </Box>
+        </Box>
+      )}
 
-      {/* Botón */}
-      <Button
-        id="sudoers-apply-btn"
-        variant="contained"
-        disabled={!isFormValid || loading}
-        onClick={handleSubmit}
-        startIcon={loading ? <CircularProgress size={18} color="inherit" /> : null}
-        sx={{
-          background: "linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)",
-          px: 4,
-          py: 1.2,
-          borderRadius: 2,
-          fontWeight: 700,
-          letterSpacing: 0.5,
-          "&:hover": {
-            background: "linear-gradient(135deg, #6d28d9 0%, #9333ea 100%)",
-            boxShadow: "0 4px 14px #7c3aed50",
-          },
-          "&:disabled": {
-            background: "#e0e0e0",
-          },
-        }}
-      >
-        {loading ? "Ejecutando playbook..." : "Aplicar"}
-      </Button>
+      {/* STEP 3: RESULTADO */}
+      {activeStep === 2 && (
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", py: 2 }}>
+          {loading ? (
+            <>
+              <CircularProgress size={40} sx={{ color: "#7c3aed", mb: 2 }} />
+              <Typography variant="body1">Ejecutando playbook, creando usuario...</Typography>
+            </>
+          ) : result ? (
+            <Box sx={{ width: "100%" }}>
+              <Alert
+                severity={result.ok ? "success" : "error"}
+                icon={result.ok ? <CheckCircleOutlineIcon /> : <ErrorOutlineIcon />}
+                sx={{ mb: 2, borderRadius: 2 }}
+              >
+                {result.message}
+              </Alert>
+              {result.ok && result.uid && (
+                <Alert severity="info" sx={{ borderRadius: 2 }}>
+                  <strong>User ID (UID):</strong> {result.uid}
+                </Alert>
+              )}
+            </Box>
+          ) : null}
+        </Box>
+      )}
+
+      {/* BOTONES */}
+      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, mt: 3 }}>
+        {activeStep === 2 && !loading && (
+          <Button onClick={handleReset} sx={{ color: "#7c3aed" }}>
+            Volver al inicio
+          </Button>
+        )}
+        {activeStep !== 2 && (
+          <Button
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            sx={{ color: "text.secondary" }}
+          >
+            Atrás
+          </Button>
+        )}
+        {activeStep !== 2 && (
+          <Button
+            variant="contained"
+            onClick={handleNext}
+            disabled={(activeStep === 0 && !isUsernameValid) || (activeStep === 1 && !isPasswordValid)}
+            sx={{
+              background: "linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)",
+              "&:hover": {
+                background: "linear-gradient(135deg, #6d28d9 0%, #9333ea 100%)",
+                boxShadow: "0 4px 14px #7c3aed50",
+              },
+              "&:disabled": { background: "#e0e0e0" }
+            }}
+          >
+            {activeStep === steps.length - 2 ? "Crear y Aplicar" : "Siguiente"}
+          </Button>
+        )}
+      </Box>
     </Box>
   );
 }

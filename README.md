@@ -99,7 +99,7 @@ El watcher es un **proceso Python en segundo plano** que monitorea continuamente
    - **Guarda el `mtime` actual antes de ejecutar nada** (esto previene condiciones de carrera si el archivo vuelve a modificarse durante la ejecución de Ansible).
    - Ejecuta `bash parse_and_run.sh` como subproceso.
    - Actualiza el `mtime` de referencia con el valor guardado previamente.
-5. Registra toda la actividad en `watcher.log`.
+5. Registra toda la actividad en `app.log`.
 
 ```
 db.json cambia
@@ -201,7 +201,7 @@ bash levanta-todo.sh
 1. Verifica e instala **Ansible** si no está disponible (`sudo apt install ansible`).
 2. Instala la dependencia de Python **PyYAML** (`pip install pyyaml`).
 3. Lanza **JSON Server** en background (`http://localhost:3001`), guardando logs en `json-server.log`.
-4. Lanza el **Watcher** (`watcher.py`) en background, guardando logs en `watcher.log`.
+4. Lanza el **Watcher** (`watcher.py`) en background, guardando logs en `app.log`.
 5. Instala dependencias de Node (`npm ci`) y arranca el **frontend** con `npm run dev`.
 6. Al detener el frontend (Ctrl+C), mata automáticamente los procesos de JSON Server y Watcher.
 
@@ -224,7 +224,7 @@ bash levanta-todo.sh
    → Escribe packages.yml y packages_to_remove.yml
 9. parse_and_run.sh → ansible-playbook -i inventory.ini site.yml
    → Ansible instala el nuevo paquete (state: present)
-10. Todo queda registrado en watcher.log
+10. Todo queda registrado en app.log
 ```
 
 ---
@@ -251,7 +251,7 @@ bash levanta-todo.sh
                             + purge: yes   → elimina archivos de config
                             + autoremove   → limpia dependencias huérfanas
 8. Ansible reporta "nginx DESINSTALADO"
-9. Todo queda registrado en watcher.log
+9. Todo queda registrado en app.log
 ```
 
 ---
@@ -325,7 +325,7 @@ material-ui/
 ├── parse_and_run.sh        # Orquestador: parseo + ejecución Ansible
 ├── actualizar_v_ansible.py # Parser de db.json → packages.yml
 ├── levanta-todo.sh         # Script de inicio único
-├── watcher.log             # Logs del watcher (auto-generado)
+├── app.log                 # Logs unificados del watcher y api-server
 ├── json-server.log         # Logs del JSON Server (auto-generado)
 └── package.json            # Dependencias Node (React, Vite, MUI)
 ```

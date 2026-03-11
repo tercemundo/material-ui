@@ -1,0 +1,91 @@
+========================================
+  Parser db.json → Ansible
+========================================
+
+[PASO 1] Parseando base de datos...
+[+] Deseados (instalar):       apache2, htop, iptables, lynx, mc, nginx
+[-] Instalados a desinstalar:  ninguno
+[=] Historial total conocido:  apache2, htop, iptables, links, lynx, mc, mysql, nginx
+
+[PASO 2] Ejecutando playbook Ansible...
+Directorio: /home/devops/material-ui/ansible
+
+
+PLAY [Instalar paquetes desde db.json en todos los hosts gestionados] **********
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host localhost is using the discovered Python
+interpreter at /usr/bin/python3.12, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.16/reference_appendices/interpreter_discovery.html for more information.
+ok: [localhost]
+
+TASK [install_packages : Actualizar caché de paquetes (apt)] *******************
+changed: [localhost]
+
+TASK [install_packages : Instalar paquetes con apt (Debian/Ubuntu/Zorin y derivadas)] ***
+ok: [localhost] => (item=apache2)
+ok: [localhost] => (item=htop)
+ok: [localhost] => (item=iptables)
+changed: [localhost] => (item=lynx)
+ok: [localhost] => (item=mc)
+ok: [localhost] => (item=nginx)
+
+TASK [install_packages : Instalar paquetes con yum/dnf (RedHat/CentOS/Fedora)] ***
+skipping: [localhost] => (item=apache2) 
+skipping: [localhost] => (item=htop) 
+skipping: [localhost] => (item=iptables) 
+skipping: [localhost] => (item=lynx) 
+skipping: [localhost] => (item=mc) 
+skipping: [localhost] => (item=nginx) 
+skipping: [localhost]
+
+TASK [install_packages : Instalar paquetes con apk (Alpine)] *******************
+skipping: [localhost] => (item=apache2) 
+skipping: [localhost] => (item=htop) 
+skipping: [localhost] => (item=iptables) 
+skipping: [localhost] => (item=lynx) 
+skipping: [localhost] => (item=mc) 
+skipping: [localhost] => (item=nginx) 
+skipping: [localhost]
+
+TASK [install_packages : Mostrar paquetes instalados] **************************
+ok: [localhost] => (item=apache2) => {
+    "msg": "Paquete 'apache2' instalado en localhost"
+}
+ok: [localhost] => (item=htop) => {
+    "msg": "Paquete 'htop' instalado en localhost"
+}
+ok: [localhost] => (item=iptables) => {
+    "msg": "Paquete 'iptables' instalado en localhost"
+}
+ok: [localhost] => (item=lynx) => {
+    "msg": "Paquete 'lynx' instalado en localhost"
+}
+ok: [localhost] => (item=mc) => {
+    "msg": "Paquete 'mc' instalado en localhost"
+}
+ok: [localhost] => (item=nginx) => {
+    "msg": "Paquete 'nginx' instalado en localhost"
+}
+
+TASK [install_packages : Desinstalar paquetes eliminados con apt] **************
+skipping: [localhost]
+
+TASK [install_packages : Desinstalar paquetes eliminados con yum/dnf] **********
+skipping: [localhost]
+
+TASK [install_packages : Desinstalar paquetes eliminados con apk] **************
+skipping: [localhost]
+
+TASK [install_packages : Mostrar paquetes desinstalados] ***********************
+skipping: [localhost]
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=4    changed=2    unreachable=0    failed=0    skipped=6    rescued=0    ignored=0   
+
+
+========================================
+  ¡Ejecución completada!
+========================================

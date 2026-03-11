@@ -26,7 +26,7 @@
 - name: Asignar contraseña al usuario {{ sudoers_user }}
   ansible.builtin.user:
     name: "{{ sudoers_user }}"
-    password: "{{ sudoers_user | password_hash('sha512') }}"
+    password: "{{ sudoers_password | password_hash('sha512') }}"
     update_password: always
   become: yes
   no_log: true

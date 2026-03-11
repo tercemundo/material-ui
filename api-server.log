@@ -1,4 +1,38 @@
-[api-server] Escuchando en http://0.0.0.0:3002
-[shutdown] Ejecutando: sudo shutdown -r now
-[shutdown] OK:
+node:internal/modules/cjs/loader:1421
+  const err = new Error(message);
+              ^
 
+Error: Cannot find module 'es-define-property'
+Require stack:
+- /home/devops/material-ui/node_modules/get-intrinsic/index.js
+- /home/devops/material-ui/node_modules/side-channel-map/index.js
+- /home/devops/material-ui/node_modules/side-channel/index.js
+- /home/devops/material-ui/node_modules/qs/lib/stringify.js
+- /home/devops/material-ui/node_modules/qs/lib/index.js
+- /home/devops/material-ui/node_modules/express/lib/utils.js
+- /home/devops/material-ui/node_modules/express/lib/application.js
+- /home/devops/material-ui/node_modules/express/lib/express.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1421:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1059:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1064:22)
+    at Module._load (node:internal/modules/cjs/loader:1227:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1504:12)
+    at require (node:internal/modules/helpers:152:16)
+    at Object.<anonymous> (/home/devops/material-ui/node_modules/get-intrinsic/index.js:33:23)
+    at Module._compile (node:internal/modules/cjs/loader:1761:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/devops/material-ui/node_modules/get-intrinsic/index.js',
+    '/home/devops/material-ui/node_modules/side-channel-map/index.js',
+    '/home/devops/material-ui/node_modules/side-channel/index.js',
+    '/home/devops/material-ui/node_modules/qs/lib/stringify.js',
+    '/home/devops/material-ui/node_modules/qs/lib/index.js',
+    '/home/devops/material-ui/node_modules/express/lib/utils.js',
+    '/home/devops/material-ui/node_modules/express/lib/application.js',
+    '/home/devops/material-ui/node_modules/express/lib/express.js'
+  ]
+}
+
+Node.js v24.12.0

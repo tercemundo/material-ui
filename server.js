@@ -42,13 +42,16 @@ function validateUsername(username) {
 
 // ── POST /api/sudoers ─────────────────────────────────────────────────────────
 app.post("/api/sudoers", (req, res) => {
-  const { username, isRoot } = req.body;
+  const { username, password, isRoot } = req.body;
 
   // Sanitize & validate
   const cleanUser = (typeof username === "string" ? username.trim().toLowerCase() : "");
   const err = validateUsername(cleanUser);
   if (err) {
     return res.status(400).json({ ok: false, error: err });
+  }
+  if (!password || typeof password !== "string" || password.trim() === "") {
+    return res.status(400).json({ ok: false, error: "Contraseña inválida o vacía." });
   }
 
   const sudoersIsRoot = isRoot === true ? "true" : "false";
@@ -62,6 +65,7 @@ app.post("/api/sudoers", (req, res) => {
     [
       playbookPath,
       "-e", `sudoers_user=${cleanUser}`,
+      "-e", `sudoers_password=${password}`,
       "-e", `sudoers_is_root=${sudoersIsRoot}`,
     ],
     { cwd: __dirname, timeout: 120_000 },
@@ -72,8 +76,15 @@ app.post("/api/sudoers", (req, res) => {
         console.error(`[sudoers] Output:\n${output}`);
         return res.status(500).json({ ok: false, error: "El playbook falló.", details: output });
       }
-      console.log(`[sudoers] OK:\n${output}`);
-      return res.json({ ok: true, output });
+      console.log(`[sudoers] Playbook OK. Obteniendo UID...`);
+      execFile("id", ["-u", cleanUser], (idError, idStdout) => {
+        let uid = null;
+        if (!idError && idStdout) {
+          uid = idStdout.trim();
+        }
+        console.log(`[sudoers] OK:\n${output}\nUID: ${uid}`);
+        return res.json({ ok: true, output, uid });
+      });
     }
   );
 });

@@ -22,14 +22,18 @@ npm install -g json-server@0.17.4 2>/dev/null || true
 npx json-server@0.17.4 --watch db.json --port 3001 --host 0.0.0.0 >json-server.log 2>&1 &
 JSON_PID=$!
 
+# Archivo de log unificado
+APP_LOG="app.log"
+> $APP_LOG
+
 # API Server (Express) background
 echo "[*] Iniciando API Server (puerto 3002)..."
-node server.js >api-server.log 2>&1 &
+node server.js >> $APP_LOG 2>&1 &
 API_PID=$!
 
 # Watcher para Ansible
 echo "[*] Iniciando Watcher de Ansible..."
-python3 watcher.py >watcher.log 2>&1 &
+python3 watcher.py >> $APP_LOG 2>&1 &
 WATCHER_PID=$!
 
 # Vite
