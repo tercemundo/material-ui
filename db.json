@@ -17,6 +17,18 @@
       "ip": "192.168.0.44",
       "paquete": "apache2",
       "so": "Linux Debian"
+    },
+    {
+      "ip": "127.0.0.1",
+      "paquete": "mc",
+      "so": "Zorin",
+      "id": "lvQEJpS"
+    },
+    {
+      "ip": "127.0.0.1",
+      "paquete": "htop",
+      "so": "Zorin",
+      "id": "0GlC5Cl"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

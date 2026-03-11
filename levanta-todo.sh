@@ -1,3 +1,4 @@
+#!/bin/bash
 # Verificar e instalar dependencias del sistema
 echo "[*] Verificando dependencias..."
 
@@ -17,13 +18,18 @@ python3 -m pip install pyyaml >/dev/null 2>&1 || true
 
 # JSON Server background
 echo "[*] Iniciando JSON Server..."
-npm install -g json-server 2>/dev/null || true
-npx json-server --watch db.json --port 3001 --host 0.0.0.0 > json-server.log 2>&1 &
+npm install -g json-server@0.17.4 2>/dev/null || true
+npx json-server@0.17.4 --watch db.json --port 3001 --host 0.0.0.0 >json-server.log 2>&1 &
 JSON_PID=$!
+
+# API Server (Express) background
+echo "[*] Iniciando API Server (puerto 3002)..."
+node server.js >api-server.log 2>&1 &
+API_PID=$!
 
 # Watcher para Ansible
 echo "[*] Iniciando Watcher de Ansible..."
-python3 watcher.py > watcher.log 2>&1 &
+python3 watcher.py >watcher.log 2>&1 &
 WATCHER_PID=$!
 
 # Vite
@@ -34,4 +40,5 @@ npm run dev
 # Cleanup
 echo "[*] Deteniendo servicios..."
 kill $JSON_PID 2>/dev/null || true
+kill $API_PID 2>/dev/null || true
 kill $WATCHER_PID 2>/dev/null || true

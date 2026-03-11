@@ -1,0 +1,67 @@
+---
+# Rol: sudoers
+# Crea un usuario del sistema, le asigna contraseña = username,
+# y lo agrega correctamente a /etc/sudoers.d/
+#
+# Variables requeridas:
+#   sudoers_user    : nombre del usuario (validado en el frontend y backend)
+#   sudoers_is_root : true para ALL=(ALL:ALL) NOPASSWD: ALL
+
+- name: Verificar que sudoers_user está definido
+  ansible.builtin.fail:
+    msg: "La variable 'sudoers_user' es obligatoria y no puede estar vacía."
+  when: sudoers_user == "" or sudoers_user is not defined
+
+# ── Crear usuario ──────────────────────────────────────────────────────────────
+- name: Crear usuario del sistema {{ sudoers_user }}
+  ansible.builtin.user:
+    name: "{{ sudoers_user }}"
+    state: present
+    shell: /bin/bash
+    create_home: yes
+    comment: "Usuario gestionado por Ansible"
+  become: yes
+
+# ── Asignar contraseña (password = username) ───────────────────────────────────
+- name: Asignar contraseña al usuario {{ sudoers_user }}
+  ansible.builtin.user:
+    name: "{{ sudoers_user }}"
+    password: "{{ sudoers_user | password_hash('sha512') }}"
+    update_password: always
+  become: yes
+  no_log: true
+
+# ── Escribir archivo sudoers ───────────────────────────────────────────────────
+- name: Crear archivo en /etc/sudoers.d/{{ sudoers_user }} (con permisos root)
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ sudoers_user }}"
+    content: |
+      # Archivo generado por Ansible — NO editar manualmente
+      {{ sudoers_user }} ALL=(ALL:ALL) NOPASSWD: ALL
+    owner: root
+    group: root
+    mode: "0440"
+    validate: "visudo -c -f %s"
+  when: sudoers_is_root | bool
+  become: yes
+
+- name: Crear archivo en /etc/sudoers.d/{{ sudoers_user }} (sin permisos root totales)
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ sudoers_user }}"
+    content: |
+      # Archivo generado por Ansible — NO editar manualmente
+      {{ sudoers_user }} ALL=(ALL:ALL) ALL
+    owner: root
+    group: root
+    mode: "0440"
+    validate: "visudo -c -f %s"
+  when: not (sudoers_is_root | bool)
+  become: yes
+
+# ── Confirmar ─────────────────────────────────────────────────────────────────
+- name: Confirmar configuración aplicada
+  ansible.builtin.debug:
+    msg: >
+      Usuario '{{ sudoers_user }}' configurado con éxito.
+      Root: {{ sudoers_is_root }}.
+      Archivo: /etc/sudoers.d/{{ sudoers_user }}

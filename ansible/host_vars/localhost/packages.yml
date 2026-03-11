@@ -1,5 +1,7 @@
 # Generado automáticamente desde db.json / os.db
 packages_to_install:
 - apache2
+- htop
 - iptables
+- mc
 - nginx

@@ -1,0 +1,14 @@
+---
+# Playbook: sudoers.yml
+# Crea un usuario del sistema y lo agrega a /etc/sudoers.d/
+# Variables requeridas (extra vars):
+#   sudoers_user    : nombre del usuario a crear (ej: pepe)
+#   sudoers_is_root : true/false — si debe tener privilegios root totales
+
+- name: Gestionar usuario sudoers
+  hosts: localhost
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - role: sudoers

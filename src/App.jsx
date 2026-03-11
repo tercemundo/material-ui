@@ -1,17 +1,13 @@
 import React from "react";
-import HostsGrid from "./HostsGrid";
-import { Container, Typography } from "@mui/material";
+import ActionPanel from "./ActionPanel";
+import { Container } from "@mui/material";
 
 function App() {
   return (
     <Container sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Panel de Hosts
-      </Typography>
-      <HostsGrid />
+      <ActionPanel />
     </Container>
   );
 }
 
 export default App;
-
