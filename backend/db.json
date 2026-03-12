@@ -23,12 +23,6 @@
       "ip": "127.0.0.1",
       "paquete": "mc",
       "so": "Zorin"
-    },
-    {
-      "id": "7492",
-      "ip": "127.0.0.1",
-      "paquete": "htop",
-      "so": "Zorin"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

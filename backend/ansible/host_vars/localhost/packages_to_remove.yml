@@ -1,5 +1,6 @@
 # Generado automáticamente desde db.json / os.db
 packages_to_remove:
+- htop
 - links
 - lynx
 - mysql

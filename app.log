@@ -47,3 +47,22 @@ localhost                  : ok=5    changed=3    unreachable=0    failed=0    s
 [WARNING]: provided hosts list is empty, only localhost is available. Note that
 the implicit localhost does not match 'all'
 UID: 1006
+[api-server] Escuchando en http://0.0.0.0:3002
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Conexión cerrada. Matando proceso pty.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Conexión cerrada. Matando proceso pty.
+[terminal] Conexión cerrada. Matando proceso pty.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Conexión cerrada. Matando proceso pty.
+[terminal] Conexión cerrada. Matando proceso pty.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Conexión cerrada. Matando proceso pty.
+[terminal] Conexión cerrada. Matando proceso pty.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Conexión cerrada. Matando proceso pty.
+[terminal] Conexión cerrada. Matando proceso pty.

@@ -869,3 +869,206 @@ localhost                  : ok=6    changed=2    unreachable=0    failed=0    s
 ========================================
   ¡Ejecución completada!
 ========================================
+========================================
+  Parser db.json → Ansible
+========================================
+
+[PASO 1] Parseando base de datos...
+[+] Deseados (instalar):       apache2, iptables, mc, nginx
+[-] Instalados a desinstalar:  htop, links, lynx, mysql
+[=] Historial total conocido:  apache2, htop, iptables, links, lynx, mc, mysql, nginx
+
+[PASO 2] Ejecutando playbook Ansible...
+Directorio: /home/devops/material-ui/backend/ansible
+
+========================================
+  Parser db.json → Ansible
+========================================
+
+[PASO 1] Parseando base de datos...
+[+] Deseados (instalar):       apache2, iptables, mc, nginx
+[-] Instalados a desinstalar:  htop, links, lynx, mysql
+[=] Historial total conocido:  apache2, htop, iptables, links, lynx, mc, mysql, nginx
+
+[PASO 2] Ejecutando playbook Ansible...
+Directorio: /home/devops/material-ui/backend/ansible
+
+
+PLAY [Instalar paquetes desde db.json en todos los hosts gestionados] **********
+
+TASK [Gathering Facts] *********************************************************
+
+PLAY [Instalar paquetes desde db.json en todos los hosts gestionados] **********
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host localhost is using the discovered Python
+interpreter at /usr/bin/python3.12, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.16/reference_appendices/interpreter_discovery.html for more information.
+ok: [localhost]
+
+TASK [install_packages : Actualizar caché de paquetes (apt)] *******************
+[WARNING]: Platform linux on host localhost is using the discovered Python
+interpreter at /usr/bin/python3.12, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.16/reference_appendices/interpreter_discovery.html for more information.
+ok: [localhost]
+
+TASK [install_packages : Actualizar caché de paquetes (apt)] *******************
+ok: [localhost]
+
+TASK [install_packages : Instalar paquetes con apt (Debian/Ubuntu/Zorin y derivadas)] ***
+ok: [localhost]
+
+TASK [install_packages : Instalar paquetes con apt (Debian/Ubuntu/Zorin y derivadas)] ***
+ok: [localhost] => (item=apache2)
+ok: [localhost] => (item=iptables)
+ok: [localhost] => (item=mc)
+ok: [localhost] => (item=nginx)
+
+TASK [install_packages : Instalar paquetes con yum/dnf (RedHat/CentOS/Fedora)] ***
+ok: [localhost] => (item=apache2)
+ok: [localhost] => (item=iptables)
+ok: [localhost] => (item=mc)
+ok: [localhost] => (item=nginx)
+
+TASK [install_packages : Instalar paquetes con yum/dnf (RedHat/CentOS/Fedora)] ***
+skipping: [localhost] => (item=apache2) 
+skipping: [localhost] => (item=iptables) 
+skipping: [localhost] => (item=mc) 
+skipping: [localhost] => (item=nginx) 
+skipping: [localhost]
+
+TASK [install_packages : Instalar paquetes con apk (Alpine)] *******************
+skipping: [localhost] => (item=apache2) 
+skipping: [localhost] => (item=iptables) 
+skipping: [localhost] => (item=mc) 
+skipping: [localhost] => (item=nginx) 
+skipping: [localhost]
+
+TASK [install_packages : Instalar paquetes con apk (Alpine)] *******************
+skipping: [localhost] => (item=apache2) 
+skipping: [localhost] => (item=iptables) 
+skipping: [localhost] => (item=mc) 
+skipping: [localhost] => (item=nginx) 
+skipping: [localhost]
+
+TASK [install_packages : Mostrar paquetes instalados] **************************
+skipping: [localhost] => (item=apache2) 
+skipping: [localhost] => (item=iptables) 
+skipping: [localhost] => (item=mc) 
+skipping: [localhost] => (item=nginx) 
+skipping: [localhost]
+
+TASK [install_packages : Mostrar paquetes instalados] **************************
+ok: [localhost] => (item=apache2) => {
+    "msg": "Paquete 'apache2' instalado en localhost"
+}
+ok: [localhost] => (item=iptables) => {
+    "msg": "Paquete 'iptables' instalado en localhost"
+}
+ok: [localhost] => (item=mc) => {
+    "msg": "Paquete 'mc' instalado en localhost"
+}
+ok: [localhost] => (item=nginx) => {
+    "msg": "Paquete 'nginx' instalado en localhost"
+}
+
+TASK [install_packages : Desinstalar paquetes eliminados con apt] **************
+ok: [localhost] => (item=apache2) => {
+    "msg": "Paquete 'apache2' instalado en localhost"
+}
+ok: [localhost] => (item=iptables) => {
+    "msg": "Paquete 'iptables' instalado en localhost"
+}
+ok: [localhost] => (item=mc) => {
+    "msg": "Paquete 'mc' instalado en localhost"
+}
+ok: [localhost] => (item=nginx) => {
+    "msg": "Paquete 'nginx' instalado en localhost"
+}
+
+TASK [install_packages : Desinstalar paquetes eliminados con apt] **************
+failed: [localhost] (item=htop) => {"ansible_loop_var": "item", "changed": false, "item": "htop", "msg": "'apt-get remove 'htop'' failed: E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 824275 (apt-get)\nE: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?\n", "rc": 100, "stderr": "E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 824275 (apt-get)\nE: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?\n", "stderr_lines": ["E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 824275 (apt-get)", "E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?"], "stdout": "", "stdout_lines": []}
+ok: [localhost] => (item=links)
+ok: [localhost] => (item=lynx)
+ok: [localhost] => (item=mysql)
+...ignoring
+
+TASK [install_packages : Desinstalar paquetes eliminados con yum/dnf] **********
+skipping: [localhost] => (item=htop) 
+skipping: [localhost] => (item=links) 
+skipping: [localhost] => (item=lynx) 
+skipping: [localhost] => (item=mysql) 
+skipping: [localhost]
+
+TASK [install_packages : Desinstalar paquetes eliminados con apk] **************
+skipping: [localhost] => (item=htop) 
+skipping: [localhost] => (item=links) 
+skipping: [localhost] => (item=lynx) 
+skipping: [localhost] => (item=mysql) 
+skipping: [localhost]
+
+TASK [install_packages : Mostrar paquetes desinstalados] ***********************
+ok: [localhost] => (item=htop) => {
+    "msg": "Paquete 'htop' DESINSTALADO de localhost"
+}
+ok: [localhost] => (item=links) => {
+    "msg": "Paquete 'links' DESINSTALADO de localhost"
+}
+ok: [localhost] => (item=lynx) => {
+    "msg": "Paquete 'lynx' DESINSTALADO de localhost"
+}
+ok: [localhost] => (item=mysql) => {
+    "msg": "Paquete 'mysql' DESINSTALADO de localhost"
+}
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=6    changed=0    unreachable=0    failed=0    skipped=4    rescued=0    ignored=1   
+
+
+========================================
+  ¡Ejecución completada!
+========================================
+changed: [localhost] => (item=htop)
+ok: [localhost] => (item=links)
+ok: [localhost] => (item=lynx)
+ok: [localhost] => (item=mysql)
+
+TASK [install_packages : Desinstalar paquetes eliminados con yum/dnf] **********
+skipping: [localhost] => (item=htop) 
+skipping: [localhost] => (item=links) 
+skipping: [localhost] => (item=lynx) 
+skipping: [localhost] => (item=mysql) 
+skipping: [localhost]
+
+TASK [install_packages : Desinstalar paquetes eliminados con apk] **************
+skipping: [localhost] => (item=htop) 
+skipping: [localhost] => (item=links) 
+skipping: [localhost] => (item=lynx) 
+skipping: [localhost] => (item=mysql) 
+skipping: [localhost]
+
+TASK [install_packages : Mostrar paquetes desinstalados] ***********************
+ok: [localhost] => (item=htop) => {
+    "msg": "Paquete 'htop' DESINSTALADO de localhost"
+}
+ok: [localhost] => (item=links) => {
+    "msg": "Paquete 'links' DESINSTALADO de localhost"
+}
+ok: [localhost] => (item=lynx) => {
+    "msg": "Paquete 'lynx' DESINSTALADO de localhost"
+}
+ok: [localhost] => (item=mysql) => {
+    "msg": "Paquete 'mysql' DESINSTALADO de localhost"
+}
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=6    changed=1    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0   
+
+
+========================================
+  ¡Ejecución completada!
+========================================
