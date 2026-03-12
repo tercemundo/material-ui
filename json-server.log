@@ -1,21 +1,15 @@
+--watch/-w can be omitted, JSON Server 1+ watches for file changes by default
+JSON Server started on PORT :3001
+Press CTRL-C to stop
+Watching db.json...
 
-  \{^_^}/ hi!
+♡⸜(˶˃ ᵕ ˂˶)⸝♡
 
-  Loading db.json
-  Done
+Index:
+http://localhost:3001/
 
-  Resources
-  http://0.0.0.0:3001/hosts
+Static files:
+Serving ./public directory if it exists
 
-  Home
-  http://0.0.0.0:3001
-
-  Type s + enter at any time to create a snapshot of the database
-  Watching...
-
-[0mGET /hosts [32m200[0m 35.720 ms - 579[0m
-[0mGET /hosts [36m304[0m 32.529 ms - -[0m
-[0mGET /hosts [36m304[0m 18.000 ms - -[0m
-[0mGET /hosts [36m304[0m 7.395 ms - -[0m
-[0mGET /hosts [36m304[0m 3.841 ms - -[0m
-[0mGET /hosts [36m304[0m 3.746 ms - -[0m
+Endpoints:
+http://0.0.0.0:3001/hosts

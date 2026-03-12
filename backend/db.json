@@ -19,22 +19,16 @@
       "so": "Linux Debian"
     },
     {
+      "id": "e805",
       "ip": "127.0.0.1",
       "paquete": "mc",
-      "so": "Zorin",
-      "id": "lvQEJpS"
+      "so": "Zorin"
     },
     {
+      "id": "7492",
       "ip": "127.0.0.1",
       "paquete": "htop",
-      "so": "Zorin",
-      "id": "0GlC5Cl"
-    },
-    {
-      "ip": "127.0.0.1",
-      "paquete": "lynx",
-      "so": "Zorin",
-      "id": "E7i1sYK"
+      "so": "Zorin"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

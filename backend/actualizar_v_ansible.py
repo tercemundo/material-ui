@@ -12,40 +12,17 @@ Estrategia para calcular los paquetes a desinstalar:
 """
 import json
 import os
-import subprocess
 import yaml
 
-# Rutas de archivos
-DB_FILE        = 'db.json'
-OUTPUT_DIR     = 'ansible/host_vars/localhost'
+# Directorio donde vive este script (backend/)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Rutas de archivos absolutas
+DB_FILE        = os.path.join(SCRIPT_DIR, 'db.json')
+OUTPUT_DIR     = os.path.join(SCRIPT_DIR, 'ansible', 'host_vars', 'localhost')
 PACKAGES_FILE  = os.path.join(OUTPUT_DIR, 'packages.yml')
 TO_REMOVE_FILE = os.path.join(OUTPUT_DIR, 'packages_to_remove.yml')
-# Historial acumulativo de TODOS los paquetes que alguna vez se solicitaron
 HISTORY_FILE   = os.path.join(OUTPUT_DIR, 'known_packages.yml')
-
-
-def get_installed_from(candidates):
-    """
-    Dado un conjunto de nombres de paquetes, retorna cuáles están
-    realmente instalados en el sistema usando dpkg-query.
-    """
-    installed = set()
-    if not candidates:
-        return installed
-    try:
-        result = subprocess.run(
-            ['dpkg-query', '-W', '-f=${Package} ${Status}\n'] + sorted(candidates),
-            capture_output=True, text=True
-        )
-        for line in result.stdout.splitlines():
-            parts = line.split()
-            if len(parts) >= 4 and parts[-1] == 'installed':
-                installed.add(parts[0])
-    except FileNotFoundError:
-        print("[!] dpkg-query no encontrado. No se calcularán desinstalaciones.")
-    except Exception as e:
-        print(f"[!] Error consultando paquetes instalados: {e}")
-    return installed
 
 
 def read_yaml_list(filepath, key):
@@ -62,7 +39,8 @@ def read_yaml_list(filepath, key):
 def update_ansible_vars():
     db_file = DB_FILE
     if not os.path.exists(db_file):
-        db_file = 'os.db'
+        # Fallback legacy name
+        db_file = os.path.join(SCRIPT_DIR, 'os.db')
 
     if not os.path.exists(db_file):
         print("Error: Neither db.json nor os.db found.")
@@ -80,26 +58,20 @@ def update_ansible_vars():
         ))
 
         # Historial acumulativo: todos los paquetes que alguna vez quisimos
-        # Incluye lo de sesiones anteriores y lo actual
         known_history = set(read_yaml_list(HISTORY_FILE, 'known_packages'))
 
         # Ampliar el historial con lo deseado ahora
-        # (si es la primera vez, known_history puede estar vacío)
         all_candidates = known_history | set(desired)
 
         # Actualizar el historial ANTES de consultar a dpkg
-        # (agrega los nuevos paquetes deseados al historial)
         os.makedirs(OUTPUT_DIR, exist_ok=True)
         with open(HISTORY_FILE, 'w') as f:
             f.write("# Historial acumulativo — no editar manualmente\n")
             yaml.dump({'known_packages': sorted(all_candidates)}, f,
                       default_flow_style=False)
 
-        # Consultar al sistema cuáles realmente están instalados
-        actually_installed = get_installed_from(all_candidates)
-
-        # Paquetes a desinstalar = instalados que ya no están en desired
-        to_remove = sorted(actually_installed - set(desired))
+        # Paquetes a desinstalar = conocidos en historial que ya no están en desired
+        to_remove = sorted(all_candidates - set(desired))
 
         # 1. Escribir packages.yml
         with open(PACKAGES_FILE, 'w') as f:

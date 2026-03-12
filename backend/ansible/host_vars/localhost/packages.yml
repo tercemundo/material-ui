@@ -3,6 +3,5 @@ packages_to_install:
 - apache2
 - htop
 - iptables
-- lynx
 - mc
 - nginx

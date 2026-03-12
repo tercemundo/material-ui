@@ -10,6 +10,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs/promises";
 import { promisify } from "util";
+import { WebSocketServer } from "ws";
+import pty from "node-pty";
+import os from "os";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -269,7 +272,44 @@ app.post("/api/shutdown", (req, res) => {
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
+// ── Interactive Terminal (WebSocket) ──────────────────────────────────────────
+const wss = new WebSocketServer({ noServer: true });
+
+wss.on("connection", (ws) => {
+  console.log("[terminal] Nueva conexión WebSocket abierta.");
+
+  // Forzar a usar bash
+  const shell = "bash";
+  
+  const ptyProcess = pty.spawn(shell, [], {
+    name: "xterm-color",
+    cols: 80,
+    rows: 30,
+    cwd: process.env.HOME,
+    env: process.env,
+  });
+
+  ptyProcess.onData((data) => {
+    ws.send(data);
+  });
+
+  ws.on("message", (msg) => {
+    ptyProcess.write(msg);
+  });
+
+  ws.on("close", () => {
+    console.log("[terminal] Conexión cerrada. Matando proceso pty.");
+    ptyProcess.kill();
+  });
+});
+
 // ── Start ─────────────────────────────────────────────────────────────────────
-app.listen(PORT, "0.0.0.0", () => {
+const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`[api-server] Escuchando en http://0.0.0.0:${PORT}`);
+});
+
+server.on("upgrade", (request, socket, head) => {
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit("connection", ws, request);
+  });
 });

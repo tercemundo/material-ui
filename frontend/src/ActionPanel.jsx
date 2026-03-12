@@ -17,10 +17,12 @@ import JsonBuilderForm from "./JsonBuilderForm";
 import SudoersForm from "./SudoersForm";
 import HostsGrid from "./HostsGrid";
 import ShutdownForm from "./ShutdownForm";
+import TerminalForm from "./TerminalForm";
 
 import ViewInArIcon from "@mui/icons-material/ViewInAr";
 import CodeIcon from "@mui/icons-material/Code";
 import DataObjectIcon from "@mui/icons-material/DataObject";
+import TerminalIcon from "@mui/icons-material/Terminal";
 
 const ACTIONS = [
   {
@@ -70,6 +72,14 @@ const ACTIONS = [
     icon: PowerSettingsNewIcon,
     color: "#dc2626",
     gradient: "linear-gradient(135deg, #dc2626 0%, #ef4444 100%)",
+  },
+  {
+    id: "terminal",
+    label: "Terminal SO",
+    description: "Terminal de comandos interactiva",
+    icon: TerminalIcon,
+    color: "#16a34a",
+    gradient: "linear-gradient(135deg, #16a34a 0%, #22c55e 100%)",
   },
 ];
 
@@ -249,6 +259,21 @@ function ActionPanel() {
           }}
         >
           <ShutdownForm />
+        </Box>
+      </Collapse>
+
+      <Collapse in={activeAction === "terminal"} timeout={350}>
+        <Box
+          sx={{
+            mt: 3,
+            p: 3,
+            borderRadius: 3,
+            border: "2px solid #16a34a40",
+            background: "linear-gradient(135deg, #16a34a08 0%, #22c55e08 100%)",
+            boxShadow: "0 4px 24px #16a34a18",
+          }}
+        >
+          <TerminalForm />
         </Box>
       </Collapse>
     </Box>

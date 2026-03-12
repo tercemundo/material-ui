@@ -1,1 +1,49 @@
 [api-server] Escuchando en http://0.0.0.0:3002
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Conexión cerrada. Matando proceso pty.
+[terminal] Conexión cerrada. Matando proceso pty.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Conexión cerrada. Matando proceso pty.
+[terminal] Conexión cerrada. Matando proceso pty.
+[api-server] Escuchando en http://0.0.0.0:3002
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Nueva conexión WebSocket abierta.
+[terminal] Conexión cerrada. Matando proceso pty.
+[sudoers] Ejecutando playbook para usuario: qq, root: false
+[sudoers] Playbook OK. Obteniendo UID...
+[sudoers] OK:
+PLAY [Gestionar usuario sudoers] ***********************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [localhost]
+
+TASK [sudoers : Verificar que sudoers_user está definido] **********************
+skipping: [localhost]
+
+TASK [sudoers : Crear usuario del sistema qq] **********************************
+changed: [localhost]
+
+TASK [sudoers : Asignar contraseña al usuario qq] ******************************
+changed: [localhost]
+
+TASK [sudoers : Crear archivo en /etc/sudoers.d/qq (con permisos root)] ********
+skipping: [localhost]
+
+TASK [sudoers : Crear archivo en /etc/sudoers.d/qq (sin permisos root totales)] ***
+changed: [localhost]
+
+TASK [sudoers : Confirmar configuración aplicada] ******************************
+ok: [localhost] => {
+    "msg": "Usuario 'qq' configurado con éxito. Root: false. Archivo: /etc/sudoers.d/qq\n"
+}
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=5    changed=3    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+
+
+[WARNING]: No inventory was parsed, only implicit localhost is available
+[WARNING]: provided hosts list is empty, only localhost is available. Note that
+the implicit localhost does not match 'all'
+UID: 1006

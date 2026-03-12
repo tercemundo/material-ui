@@ -1,2 +1,5 @@
 # Generado automáticamente desde db.json / os.db
-packages_to_remove: []
+packages_to_remove:
+- links
+- lynx
+- mysql
