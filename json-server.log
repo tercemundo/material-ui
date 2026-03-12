@@ -13,7 +13,9 @@
   Type s + enter at any time to create a snapshot of the database
   Watching...
 
-[0mGET /hosts [36m304[0m 12.586 ms - -[0m
-[0mGET /hosts [36m304[0m 3.425 ms - -[0m
-[0mGET /hosts [36m304[0m 3.927 ms - -[0m
-[0mGET /hosts [36m304[0m 2.994 ms - -[0m
+[0mGET /hosts [32m200[0m 35.720 ms - 579[0m
+[0mGET /hosts [36m304[0m 32.529 ms - -[0m
+[0mGET /hosts [36m304[0m 18.000 ms - -[0m
+[0mGET /hosts [36m304[0m 7.395 ms - -[0m
+[0mGET /hosts [36m304[0m 3.841 ms - -[0m
+[0mGET /hosts [36m304[0m 3.746 ms - -[0m

@@ -8,10 +8,13 @@ import cors from "cors";
 import { execFile } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs/promises";
+import { promisify } from "util";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = 3002;
+const execFileAsync = promisify(execFile);
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors());
@@ -87,6 +90,155 @@ app.post("/api/sudoers", (req, res) => {
       });
     }
   );
+});
+
+// ── POST /api/containers ──────────────────────────────────────────────────────
+app.post("/api/containers", async (req, res) => {
+  const { image, name } = req.body;
+
+  if (!image || typeof image !== "string" || image.trim() === "") {
+    return res.status(400).json({ ok: false, error: "La imagen es obligatoria." });
+  }
+
+  const cleanImage = image.trim();
+  const cleanName = name && typeof name === "string" ? name.trim() : "";
+
+  // Construir comando docker run
+  const dockerArgs = ["run", "-d"];
+  if (cleanName) {
+    dockerArgs.push("--name", cleanName);
+  }
+  dockerArgs.push(cleanImage);
+
+  console.log(`[containers] Ejecutando: sudo docker ${dockerArgs.join(" ")}`);
+
+  // Lanzar contenedor
+  execFile("sudo", ["docker", ...dockerArgs], { timeout: 60_000 }, async (err, stdout, stderr) => {
+    if (err) {
+      console.error(`[containers] Error ejecutando contenedor: ${err.message}`);
+      return res.status(500).json({ ok: false, error: "Fallo al crear contenedor", details: stderr });
+    }
+
+    try {
+      // Registrar en containers.json
+      const jsonPath = path.join(__dirname, "containers.json");
+      let containers = [];
+      try {
+        const fileData = await fs.readFile(jsonPath, "utf-8");
+        containers = JSON.parse(fileData);
+      } catch (readErr) {
+        // Ignorar si el archivo no existe (ENOENT)
+      }
+
+      containers.push({
+        image: cleanImage,
+        name: cleanName || undefined,
+        timestamp: new Date().toISOString()
+      });
+
+      await fs.writeFile(jsonPath, JSON.stringify(containers, null, 2));
+
+      // Ejecutar docker ps para devolver el output
+      execFile("sudo", ["docker", "ps"], { timeout: 10_000 }, (psErr, psStdout, psStderr) => {
+        if (psErr) {
+          console.error(`[containers] Error ejecutando docker ps: ${psErr.message}`);
+          return res.status(500).json({ 
+            ok: false, 
+            error: "Contenedor iniciado, pero falló 'docker ps'", 
+            details: psStderr 
+          });
+        }
+
+        console.log(`[containers] OK. Devuelto docker ps de ${psStdout.length} bytes`);
+        return res.json({ ok: true, output: psStdout });
+      });
+
+    } catch (fsErr) {
+      console.error(`[containers] Error gestionando containers.json: ${fsErr.message}`);
+      return res.status(500).json({ ok: false, error: "Fallo al escribir en containers.json", details: fsErr.message });
+    }
+  });
+});
+
+// ── GET /api/containers ──────────────────────────────────────────────────────
+app.get("/api/containers", async (req, res) => {
+  try {
+    const jsonPath = path.join(__dirname, "containers.json");
+    const fileData = await fs.readFile(jsonPath, "utf-8");
+    return res.json({ ok: true, data: JSON.parse(fileData) });
+  } catch (err) {
+    if (err.code === "ENOENT") {
+      return res.json({ ok: true, data: [] });
+    }
+    console.error(`[containers] Error leyendo containers.json: ${err.message}`);
+    return res.status(500).json({ ok: false, error: "Error leyendo la base de datos de contenedores" });
+  }
+});
+
+// ── POST /api/containers/batch ───────────────────────────────────────────────
+app.post("/api/containers/batch", async (req, res) => {
+  const containersReq = req.body;
+
+  if (!Array.isArray(containersReq) || containersReq.length === 0) {
+    return res.status(400).json({ ok: false, error: "Se espera un arreglo JSON válido y no vacío." });
+  }
+
+  console.log(`[containers-batch] Ejecutando lote de ${containersReq.length} contenedores...`);
+  const jsonPath = path.join(__dirname, "containers.json");
+  let storedContainers = [];
+
+  try {
+    const fileData = await fs.readFile(jsonPath, "utf-8");
+    storedContainers = JSON.parse(fileData);
+  } catch (err) {
+    // Ignorar si no existe
+  }
+
+  const results = [];
+
+  for (const item of containersReq) {
+    const { image, name } = item;
+    if (!image || typeof image !== "string" || image.trim() === "") {
+      results.push({ image, status: "error", error: "Imagen inválida o vacía." });
+      continue;
+    }
+
+    const cleanImage = image.trim();
+    const cleanName = name && typeof name === "string" ? name.trim() : "";
+
+    const dockerArgs = ["run", "-d"];
+    if (cleanName) {
+      dockerArgs.push("--name", cleanName);
+    }
+    dockerArgs.push(cleanImage);
+
+    try {
+      await execFileAsync("sudo", ["docker", ...dockerArgs], { timeout: 60_000 });
+      storedContainers.push({
+        image: cleanImage,
+        name: cleanName || undefined,
+        timestamp: new Date().toISOString()
+      });
+      results.push({ image: cleanImage, name: cleanName, status: "success" });
+    } catch (err) {
+      console.error(`[containers-batch] Fallo contenedor ${cleanImage}: ${err.message}`);
+      results.push({ image: cleanImage, name: cleanName, status: "error", error: err.message });
+    }
+  }
+
+  try {
+    await fs.writeFile(jsonPath, JSON.stringify(storedContainers, null, 2));
+  } catch (fsErr) {
+    console.error(`[containers-batch] Error escribiendo JSON: ${fsErr.message}`);
+  }
+
+  try {
+    const { stdout: psStdout } = await execFileAsync("sudo", ["docker", "ps"], { timeout: 10_000 });
+    return res.json({ ok: true, results, output: psStdout });
+  } catch (psErr) {
+    console.error(`[containers-batch] Falló docker ps: ${psErr.message}`);
+    return res.status(500).json({ ok: false, error: "Lote procesado, pero falló 'docker ps'", results });
+  }
 });
 
 // ── POST /api/shutdown ───────────────────────────────────────────────────────

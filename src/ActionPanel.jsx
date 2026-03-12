@@ -11,9 +11,16 @@ import {
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ExtensionIcon from "@mui/icons-material/Extension";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
+import ContainersForm from "./ContainersForm";
+import JsonOutputForm from "./JsonOutputForm";
+import JsonBuilderForm from "./JsonBuilderForm";
 import SudoersForm from "./SudoersForm";
 import HostsGrid from "./HostsGrid";
 import ShutdownForm from "./ShutdownForm";
+
+import ViewInArIcon from "@mui/icons-material/ViewInAr";
+import CodeIcon from "@mui/icons-material/Code";
+import DataObjectIcon from "@mui/icons-material/DataObject";
 
 const ACTIONS = [
   {
@@ -31,6 +38,30 @@ const ACTIONS = [
     icon: ExtensionIcon,
     color: "#0891b2",
     gradient: "linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)",
+  },
+  {
+    id: "contenedores",
+    label: "Contenedores",
+    description: "Desplegar imágenes de Docker",
+    icon: ViewInArIcon,
+    color: "#2563eb",
+    gradient: "linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)",
+  },
+  {
+    id: "json-output",
+    label: "JSON Output",
+    description: "Ver y exportar contenedores actuales",
+    icon: CodeIcon,
+    color: "#d97706",
+    gradient: "linear-gradient(135deg, #d97706 0%, #f59e0b 100%)",
+  },
+  {
+    id: "json-builder",
+    label: "JSON Builder",
+    description: "Lanzamiento por lotes vía JSON",
+    icon: DataObjectIcon,
+    color: "#10b981",
+    gradient: "linear-gradient(135deg, #10b981 0%, #34d399 100%)",
   },
   {
     id: "apagado",
@@ -65,7 +96,7 @@ function ActionPanel() {
           const Icon = action.icon;
           const isActive = activeAction === action.id;
           return (
-            <Grid item xs={12} sm={4} key={action.id}>
+            <Grid item xs={12} sm={6} md={4} key={action.id}>
               <Card
                 elevation={isActive ? 8 : 2}
                 sx={{
@@ -158,6 +189,51 @@ function ActionPanel() {
           }}
         >
           <HostsGrid />
+        </Box>
+      </Collapse>
+
+      <Collapse in={activeAction === "contenedores"} timeout={350}>
+        <Box
+          sx={{
+            mt: 3,
+            p: 3,
+            borderRadius: 3,
+            border: "2px solid #2563eb40",
+            background: "linear-gradient(135deg, #2563eb08 0%, #3b82f608 100%)",
+            boxShadow: "0 4px 24px #2563eb18",
+          }}
+        >
+          <ContainersForm />
+        </Box>
+      </Collapse>
+
+      <Collapse in={activeAction === "json-output"} timeout={350}>
+        <Box
+          sx={{
+            mt: 3,
+            p: 3,
+            borderRadius: 3,
+            border: "2px solid #d9770640",
+            background: "linear-gradient(135deg, #d9770608 0%, #f59e0b08 100%)",
+            boxShadow: "0 4px 24px #d9770618",
+          }}
+        >
+          <JsonOutputForm />
+        </Box>
+      </Collapse>
+
+      <Collapse in={activeAction === "json-builder"} timeout={350}>
+        <Box
+          sx={{
+            mt: 3,
+            p: 3,
+            borderRadius: 3,
+            border: "2px solid #10b98140",
+            background: "linear-gradient(135deg, #10b98108 0%, #34d39908 100%)",
+            boxShadow: "0 4px 24px #10b98118",
+          }}
+        >
+          <JsonBuilderForm />
         </Box>
       </Collapse>
 
